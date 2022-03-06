@@ -57,8 +57,6 @@ async def check_jwt_token(token: str = Depends(oath_schema)):
         username = jwt_payload.get("sub")
         role = jwt_payload.get("role")
         expiration = jwt_payload.get("exp")
-        print(role)
-        print(username)
         if time.time() < expiration:
             is_valid = await db_check_jwt_token(username)
             if is_valid:

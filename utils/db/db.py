@@ -5,7 +5,7 @@ async def execute(query, is_many, values=None):
     if is_many:
         await db.execute_many(query=query, values=values)
     else:
-        await db.execute(query=query, values=values)
+        return await db.execute(query=query, values=values)  # id of inserted sera will be returned
 
 
 async def fetch(query, is_one, values=None):

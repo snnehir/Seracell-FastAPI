@@ -19,18 +19,18 @@ async def hello_world(user_id: int):
 # TODO: router for "sera" operations
 # Returns all sera from db
 @app_v1.get("/sera/all")
-async def get_all_sera():
+async def get_my_greenhouses():
     sera_all = await db_get_all_sera()
     if sera_all is None:
-        return {"There is no sera"}
+        return {"There is no greenhouse!"}
     return {"All greenhouses: " + str(sera_all)}
 
 
 @app_v1.get("/sera/my/{current_user_id}")
-async def get_all_sera(current_user_id: int):
+async def get_all_greenhouses(current_user_id: int):
     sera_all = await db_get_my_sera(current_user_id)
     if sera_all is None:
-        return {"There is no sera"}
+        return {"You do not have any greenhouse!"}
     else:
         output = ""
         for sera in sera_all:
@@ -39,12 +39,12 @@ async def get_all_sera(current_user_id: int):
 
 
 @app_v1.post("/sera/new/{current_user_id}", status_code=HTTP_201_CREATED)
-async def get_all_sera(current_user_id: int, sera: Sera):
+async def get_my_greenhouses(current_user_id: int, sera: Sera):
     await db_insert_sera(current_user_id, sera)
     return {"result": "sera is created"}
 
 
 @app_v1.delete("/sera/delete/{sera_id}")
-async def delete_sera(current_user_id: int, sera_id: int):
+async def delete_greenhouse(current_user_id: int, sera_id: int):
     await db_delete_sera(sera_id, current_user_id)
     return {"result": "sera is deleted"}

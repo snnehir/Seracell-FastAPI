@@ -20,7 +20,7 @@ uvicorn main:app --reload
 
 ### See Swagger documentation
 ```
-http://127.0.0.1:3000/docs
+http://127.0.0.1:8000/docs
 ```
 
 ### For getting more information about FastAPI:

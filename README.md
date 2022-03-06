@@ -2,8 +2,10 @@
 Aim of this repository is to understand FastAPI and track of my learning process.
 
 ## Project setup
+
+### Create virtual environment
 ```
-python -m venv work__env -> creates virtual environment
+python -m venv work__env 
 ```
 
 ### Install required packages
@@ -16,6 +18,11 @@ pip3 install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-### Documentation of FastAPI:
+### See Swagger documentation
+```
+http://127.0.0.1:3000/docs
+```
+
+### For getting more information about FastAPI:
 https://fastapi.tiangolo.com/
 

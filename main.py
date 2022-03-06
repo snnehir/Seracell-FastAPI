@@ -23,7 +23,7 @@ async def disconnect_db():
     await db.disconnect()
 
 
-@app.get("/hello")
+@app.get("/")
 async def hello_world():
     return {"HelloFastAPI!"}
 

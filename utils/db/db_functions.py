@@ -5,8 +5,8 @@ from models.owner import Owner
 
 async def db_check_username(user):
     # select * from User -> postgres
-    query = """select * from "User" where username = :elma """
-    values = {"elma": user.username}
+    query = """select * from "User" where username = :username """
+    values = {"username": user.username}
     result = await fetch(query, False, values)
     return result
 
@@ -22,8 +22,8 @@ async def db_check_jwt_token(username):
 
 
 async def db_find_owner(user_id):
-    query = """ select * from "Owner" where "OwnerID"= :elma """
-    values = {"elma": user_id}
+    query = """ select * from "Owner" where "OwnerID"= :owner_id """
+    values = {"owner_id": user_id}
     result = await fetch(query, True, values)
     if result is None:
         owner = None

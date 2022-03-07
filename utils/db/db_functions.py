@@ -1,3 +1,4 @@
+from models import owner
 from models.sera import Sera
 from utils.db.db import fetch, execute
 from models.owner import Owner
@@ -5,14 +6,14 @@ from models.owner import Owner
 
 async def db_check_username(user):
     # select * from User -> postgres
-    query = """select * from "User" where username = :username """
+    query = """select * from users where username = :username """
     values = {"username": user.username}
     result = await fetch(query, False, values)
     return result
 
 
 async def db_check_jwt_token(username):
-    query = """select * from "User" where username= :username"""
+    query = """select * from users where username = :username"""
     values = {"username": username}
     result = await fetch(query, True, values)
     if result is None:
@@ -22,7 +23,7 @@ async def db_check_jwt_token(username):
 
 
 async def db_find_owner(user_id):
-    query = """ select * from "Owner" where "OwnerID"= :owner_id """
+    query = """ select * from owner where owner_id = :owner_id """
     values = {"owner_id": user_id}
     result = await fetch(query, True, values)
     if result is None:
@@ -33,7 +34,7 @@ async def db_find_owner(user_id):
 
 
 async def db_get_all_sera():
-    query = """ select * from "Sera" """
+    query = """ select * from sera """
     result = await fetch(query, False)
     sera_all = []
     for sera in result:
@@ -43,9 +44,8 @@ async def db_get_all_sera():
 
 # TODO: get only my sera
 async def db_get_my_sera(current_user_id):
-    query = """ select * from "HasSera" inner join "Sera" 
-                on "Sera"."SeraID" = "HasSera"."SeraID"
-                where "HasSera"."OwnerID" = :current_user """
+    query = """ select * from sera
+                where :current_user = any (owners)"""
     values = {"current_user": current_user_id}
     result = await fetch(query, False, values)
     sera_all = []
@@ -54,27 +54,73 @@ async def db_get_my_sera(current_user_id):
     return sera_all
 
 
-# TODO: insert sera
+# TODO: get only my sera
+async def db_get_sera_by_id(sera_id):
+    query = """ select * from sera
+                where sera_id = :sera_id"""
+    values = {"sera_id": sera_id}
+    result = await fetch(query, True, values)
+    return result
+
+
+# TODO: insert a new sera
 async def db_insert_sera(current_user_id, sera):
-    add_query = """ insert into "Sera"("SeraName","City","Zipcode") 
-                values (:sera_name, :city, :zipcode) returning "SeraID" """
-    add_values = {"sera_name": sera.SeraName, "city": sera.City, "zipcode": sera.Zipcode}
-    created_sera_id = await execute(add_query, False, add_values)
+    array = []
+    array.append(current_user_id)
+    query = """ insert into sera(sera_name, city, zipcode, owners) 
+                    values( :sera_name, :city, :zipcode, :current_user_id)
+                """
+    values = {"sera_name": sera.sera_name, "city": sera.city,
+              "zipcode": sera.zipcode, "current_user_id": array}
+    await execute(query, False, values)
 
-    # add to relation table
-    relation_query = """ insert into "HasSera"("SeraID","OwnerID") values (:created_sera_id, :current_user_id) """
-    relation_values = {"created_sera_id": created_sera_id, "current_user_id": current_user_id}
-    await execute(relation_query, False, relation_values)
+
+# TODO: update sera owners
+async def db_add_owner_to_sera(current_user_id, sera_id):
+    find_sera = await db_get_sera_by_id(sera_id)
+    if find_sera is None:
+        return "Sera is not found! (404)"
+    else:
+        result = await db_get_sera_by_id(sera_id)
+        owners = result["owners"]
+        if current_user_id in owners:
+            return "You already own it!"
+        else:
+            query = """ update sera
+                        set owners = array_append(owners, :current_user)
+                        where sera_id = :sera_id
+                        """
+            values = {"sera_id": sera_id, "current_user": current_user_id}
+            await execute(query, False, values)
+            return "You are added to owners!"
 
 
-# TODO: update sera
+# TODO: update sera info.
 
 # TODO: delete sera
 async def db_delete_sera(sera_id, current_user_id):
-    relation_query = """ delete from "HasSera"  WHERE "SeraID" = :sera_id and "OwnerID" = :current_user_id """
-    relation_values = {"sera_id": sera_id, "current_user_id": current_user_id}
-    await execute(relation_query, False, relation_values)
+    # find all owners of this sera
+    result = await db_get_sera_by_id(sera_id)
+    owners = result["owners"]
+    # remove current user from owner list
+    try:
+        owners.remove(current_user_id)
+        # if the last owner deletes, delete sera from table
+        if len(owners) == 0:
+            query = """ delete from sera 
+                        where sera_id = :sera_id """
+            values = {"sera_id": sera_id}
+            result = "Sera is deleted completely!"
+        # if there are other owners, just remove current user from list
+        else:
+            query = """ update sera 
+                        set owners = :owners
+                        where sera_id = :sera_id """
+            values = {"sera_id": sera_id, "owners": owners}
+            result = "Sera is deleted!"
 
-    query = """ delete from "Sera"  WHERE "SeraID" = :sera_id """
-    values = {"sera_id": sera_id}
-    await execute(query, False, values)
+        await execute(query, False, values)
+        return result
+    # if user is not found in owners
+    except Exception as e:
+        return "You do not own this sera!"

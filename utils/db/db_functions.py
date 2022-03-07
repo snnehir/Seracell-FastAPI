@@ -2,10 +2,21 @@ from models.sera import Sera
 from utils.db.db import fetch, execute
 from models.owner import Owner
 
+# genel olarak çift tırnaklara gerek yok
+
+# VERİTABANI TASARIMI YORUMLARIM
+# Tasarımında HasSera ve Owner tabloları fazlalık aslında. Durduk yere daha fazla yer işgali yapıyorsun diskte.
+# owner_id sütununu Sera tablosuna koysan HasSera tablosundan kurtulursun. mevcut durumda senin her seran için extra
+# olarak HasSera tablosunda 1 satır diskte yer tutuyhor. Benim önerimi yaparsan tablodan kurtulacağın için sadece bir
+# owner_id sütunu ile hem daha az yer kaplarsın hem de select sorgularında join'in yavaşlığından kurtulursun. Bu tarz
+# durumlarda ilişkileri göstermek için ek tablo yapma. User ve Owner arasındaki farkı tam anlamadım. user tek tablo olarak
+# birleştirilebilir. İkisinin ayrı olmasındaki mantık tam olarka nedir? Bir objemiz var user, o zaman 1 tablo ve tüm özellikler
+# onun içinde olmalı.
+
 
 async def db_check_username(user):
     # select * from User -> postgres
-    query = """select * from "User" where username = :username """
+    query = """select * from "User" where username = :username """ # Neden tablo isimlerinde çift tırnak kullandın? Eğer postgresql ile çakışan bir keyword değilse çift tırnağa gerek yok.
     values = {"username": user.username}
     result = await fetch(query, False, values)
     return result

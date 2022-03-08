@@ -26,4 +26,5 @@ http://127.0.0.1:8000/docs
 ### For getting more information about FastAPI:
 https://fastapi.tiangolo.com/
 
+### PostgreSQL Database Diagram
 ![alt text](https://github.com/snnehir/Seracell-FastAPI/blob/master/db_diagram.png)

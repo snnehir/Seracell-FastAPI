@@ -18,6 +18,11 @@ pip3 install -r requirements.txt
 uvicorn main:app --reload
 ```
 
+## About Project
+
+### PostgreSQL Database Diagram
+![alt text](https://github.com/snnehir/Seracell-FastAPI/blob/master/db_diagram.png)
+
 ### See Swagger documentation
 ```
 http://127.0.0.1:8000/docs
@@ -26,5 +31,4 @@ http://127.0.0.1:8000/docs
 ### For getting more information about FastAPI:
 https://fastapi.tiangolo.com/
 
-### PostgreSQL Database Diagram
-![alt text](https://github.com/snnehir/Seracell-FastAPI/blob/master/db_diagram.png)
+

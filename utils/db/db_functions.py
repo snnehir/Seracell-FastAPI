@@ -13,6 +13,7 @@ async def db_check_username(username):
     return result
 
 
+# get user by user_id (primary key) instead of username
 async def db_check_jwt_token(user_id):
     query = """select * from users where user_id = :user_id"""
     values = {"user_id": user_id}
@@ -55,7 +56,6 @@ async def db_get_my_sera(current_user_id):
     return sera_all
 
 
-# get only my sera
 async def db_get_sera_by_id(sera_id):
     query = """ select * from sera
                 where sera_id = :sera_id"""
@@ -80,8 +80,8 @@ async def db_insert_sera(current_user_id, sera):
 async def db_add_owner_to_sera(current_user_id, sera_id):
     find_sera = await db_get_sera_by_id(sera_id)
     if find_sera is None:
-        # burada 404 diye yazıyla dönüyorsun ama bu bir anlam ifade etmiyor. Adama HTTP 404 dönmen gerekiyor requestine karşılık. şuan HTTP 200 dönüyor içinde 404 yazıyor bu olmaz.
-        # http status buradan mı çıkmalı?
+        # burada 404 diye yazıyla dönüyorsun ama bu bir anlam ifade etmiyor. Adama HTTP 404 dönmen gerekiyor requestine karşılık. şu an HTTP 200 dönüyor içinde 404 yazıyor bu olmaz.
+        # http status buradan mı gönderilmeli?
         raise HTTPException(status_code=HTTP_404_NOT_FOUND,
                             detail="Sera is not found!")
     else:

@@ -29,7 +29,7 @@ async def get_my_greenhouses():
 
 
 # Return all sera of current user (url)
-@app_v1.get("/sera/{current_user_id}")
+@app_v1.get("/sera/{current_user_id}") # burda işte artık adamın user_id'si jwt token'a gömmen lazım. şu anda sadece username'i gömmüşsün. id yi gömmek daha mantıklı. gömünde burada jwt tokeni decode edeceksin içinde user_id'yi alacaksın ve dolayııs ile artık {current_user_id} parametresine ihtiyacın kalmayacak.
 async def get_all_greenhouses(current_user_id: int):
     sera_all = await db_get_my_sera(current_user_id)
     if sera_all is None:
@@ -50,7 +50,7 @@ async def create_greenhouse(current_user_id: int, sera: Sera):
 
 # Add another owner to existing sera
 # (bu endpoint için isim bulamadım)
-@app_v1.post("/sera/x/", status_code=HTTP_201_CREATED)
+@app_v1.post("/sera/x/", status_code=HTTP_201_CREATED) # sera/owner mantıklı.
 async def add_another_owner_to_sera(current_user_id: int, sera_id: int):
     result = await db_add_owner_to_sera(current_user_id, sera_id)
 
@@ -59,6 +59,6 @@ async def add_another_owner_to_sera(current_user_id: int, sera_id: int):
 
 # sera_id -> query parameter
 @app_v1.delete("/sera/")
-async def delete_greenhouse(current_user_id: int, sera_id: int):
+async def delete_greenhouse(current_user_id: int, sera_id: int): # tüm endpointlerinde aynı current_user_id jwt token içinden almalısın ve sadece o adama ait veritabanı kayıtlarında işlem yapabilmelisin. 
     result = await db_delete_sera(sera_id, current_user_id)
     return {"result": result}

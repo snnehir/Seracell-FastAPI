@@ -79,7 +79,7 @@ async def db_insert_sera(current_user_id, sera):
 async def db_add_owner_to_sera(current_user_id, sera_id):
     find_sera = await db_get_sera_by_id(sera_id)
     if find_sera is None:
-        return "Sera is not found! (404)"
+        return "Sera is not found! (404)"  # burada 404 diye yazıyla dönüyorsun ama bu bir anlam ifade etmiyor. Adama HTTP 404 dönmen gerekiyor requestine karşılık. şuan HTTP 200 dönüyor içinde 404 yazıyor bu olmaz.
     else:
         result = await db_get_sera_by_id(sera_id)
         owners = result["owners"]

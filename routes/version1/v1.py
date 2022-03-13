@@ -13,7 +13,9 @@ app_v1 = APIRouter()
 # greet the user (fetch from owner table)
 # user_id -> query parameter
 @app_v1.get("/hello/")
-async def greet_user(user_id: int):
+async def greet_user(token: str = Depends(oauth_scheme)):
+    jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
+    user_id = jwt_payload.get("user_id")
     owner = await db_find_owner(user_id)
     if owner is None:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND)

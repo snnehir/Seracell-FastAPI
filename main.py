@@ -12,7 +12,7 @@ import aioredis
 
 
 app = FastAPI(title="Seracell Demo")
-# Authentication dependency (check jwt token)
+# Authentication dependency (check jwt token) & test dependency
 app.include_router(app_v1, prefix="/v1",
                    dependencies=[Depends(check_jwt_token), Depends(check_test_redis)])
 

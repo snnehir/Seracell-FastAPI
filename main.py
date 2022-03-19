@@ -1,19 +1,20 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.status import HTTP_401_UNAUTHORIZED
-
 from utils.const import REDIS_URL
 from utils.db.db_object import db
 from models.jwtuser import JWTUser
 from routes.version1.v1 import app_v1
 from utils.security import authenticate_user, create_jwt_token, check_jwt_token
 import utils.redis_obj as re
+from utils.redis_obj import check_test_redis
 import aioredis
+
 
 app = FastAPI(title="Seracell Demo")
 # Authentication dependency (check jwt token)
 app.include_router(app_v1, prefix="/v1",
-                   dependencies=[Depends(check_jwt_token)])
+                   dependencies=[Depends(check_jwt_token), Depends(check_test_redis)])
 
 
 # connect

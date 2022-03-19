@@ -1,5 +1,8 @@
 from databases import Database
-from utils.const import DB_USER, DB_HOST, DB_NAME, DB_PASSWORD
+from utils.const import DB_URL, TEST_DB_URL, TESTING
 
-
-db = Database(f"postgresql://{DB_USER}:{DB_PASSWORD}@localhost/{DB_NAME}")
+# URL is determined by TESTING bool
+if TESTING:
+    db = Database(TEST_DB_URL)
+else:
+    db = Database(DB_URL)

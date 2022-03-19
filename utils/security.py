@@ -33,7 +33,7 @@ async def authenticate_user(user: JWTUser):
         if verify_password(user.password, p_user["password"]):
             is_valid = True
             user.role = "admin"
-            user.user_id = p_user["user_id"]  # get user_id from db -> jwt_user
+            user.user_id = p_user["user_id"]
     if is_valid:
         return user
     return None

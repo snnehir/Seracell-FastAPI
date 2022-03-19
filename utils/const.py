@@ -7,3 +7,7 @@ DB_HOST = "postgredb"  # not localhost
 DB_USER = "user"
 DB_PASSWORD = "1234"
 DB_NAME = "seracell_demo"
+
+# REDIS
+
+REDIS_URL = "redis://localhost"

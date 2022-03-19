@@ -1,6 +1,6 @@
 FROM python:3.9
 
-WORKDIR /seracell_fastapi
+WORKDIR /Seracell-FastAPI
 
 COPY requirements.txt .
 

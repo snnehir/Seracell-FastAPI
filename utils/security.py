@@ -39,6 +39,15 @@ async def authenticate_user(user: JWTUser):
     return None
 
 
+async def login_user(username, password):
+    potential_users = await db_check_username(username)
+    is_valid = False
+    for p_user in potential_users:
+        if verify_password(password, p_user["password"]):
+            is_valid = True
+    return is_valid
+
+
 # Create access JWT token
 def create_jwt_token(user: JWTUser):
     expiration = datetime.utcnow() + timedelta(minutes=JWT_EXPIRATION_TIME_MINUTES)

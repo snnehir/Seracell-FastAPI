@@ -1,17 +1,18 @@
 import re
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 import jwt
 from starlette.status import HTTP_404_NOT_FOUND, HTTP_201_CREATED
 from utils.const import JWT_ALGORITHM, JWT_SECRET_KEY
-from utils.security import oauth_scheme
+from utils.security import oauth_scheme, verify_password, login_user
 from models.sera import Sera
-from utils.db.db_functions import db_add_owner_to_sera, db_find_owner, db_get_all_sera, db_get_my_sera, db_insert_sera, db_delete_sera
+from utils.db.db_functions import db_add_owner_to_sera, db_find_owner, db_get_all_sera, db_get_my_sera, db_insert_sera, \
+    db_delete_sera, db_check_username
+import utils.redis_obj as re
 
 app_v1 = APIRouter()
 
 
 # greet the user (fetch from owner table)
-# user_id -> query parameter
 @app_v1.get("/hello/")
 async def greet_user(token: str = Depends(oauth_scheme)):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
@@ -22,8 +23,27 @@ async def greet_user(token: str = Depends(oauth_scheme)):
     return {f"Welcome {owner.name}!"}
 
 
+# checks username and password
+@app_v1.post("/login")
+async def get_user_validation(username: str = Body(...), password: str = Body(...)):
+    # to save data in redis a key should be determined
+    redis_key = f"{username}, {password}"
+    result = await re.redis.get(redis_key)  # returns none or data (t/f)
+    if result is not None:
+        if result == b'True':
+            return {"Is valid: ": True}
+        else:
+            return {"Is valid: ": False}
+
+    # redis does not have the data. search it in db
+    else:
+        result = await login_user(username, password)  # returns true or false
+        await re.redis.set(redis_key, str(result), ex=10)  # bool cannot stored in redis
+        return {"Is valid (db): ": result}
+
+
 # TODO: router for "sera" operations
-# Returns all sera from db
+# Returns all sera in the db
 @app_v1.get("/sera/all")
 async def get_my_greenhouses():
     sera_all = await db_get_all_sera()
@@ -60,7 +80,7 @@ async def create_greenhouse(sera: Sera, token: str = Depends(oauth_scheme)):
 
 # Add another owner to existing sera
 # sera/owner mantıklı.
-@ app_v1.post("/sera/owner/", status_code=HTTP_201_CREATED)
+@app_v1.post("/sera/owner/", status_code=HTTP_201_CREATED)
 async def add_another_owner_to_sera(sera_id: int, token: str = Depends(oauth_scheme)):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
     user_id = jwt_payload.get("user_id")
@@ -69,7 +89,7 @@ async def add_another_owner_to_sera(sera_id: int, token: str = Depends(oauth_sch
 
 
 # sera_id -> query parameter
-@ app_v1.delete("/sera/")
+@app_v1.delete("/sera/")
 # tüm endpointlerinde aynı current_user_id jwt token içinden almalısın ve sadece o adama ait veritabanı kayıtlarında işlem yapabilmelisin.
 async def delete_greenhouse(sera_id: int, token: str = Depends(oauth_scheme)):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)

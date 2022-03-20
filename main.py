@@ -22,7 +22,6 @@ app.include_router(app_v1, prefix="/v1",
 async def connect_db():
     await db.connect()
     re.redis = await aioredis.from_url(REDIS_URL)
-    print("wow redis cCc")
 
 
 # disconnect

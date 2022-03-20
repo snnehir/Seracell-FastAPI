@@ -6,7 +6,7 @@ from utils.const import JWT_ALGORITHM, JWT_SECRET_KEY
 from utils.security import oauth_scheme, verify_password, login_user
 from models.sera import Sera
 from utils.db.db_functions import db_add_owner_to_sera, db_find_owner, db_get_all_sera, db_get_my_sera, db_insert_sera, \
-    db_delete_sera, db_check_username
+    db_delete_sera
 import utils.redis_obj as re
 
 app_v1 = APIRouter()
@@ -53,8 +53,6 @@ async def get_my_greenhouses():
 
 
 # Return all sera of current user
-# burda işte artık adamın user_id'si jwt token'a gömmen lazım. şu anda sadece username'i gömmüşsün. id yi gömmek daha mantıklı. gömünde burada jwt tokeni decode edeceksin içinde user_id'yi alacaksın ve dolayııs ile artık {current_user_id} parametresine ihtiyacın kalmayacak.
-# user_id gereken her endpoint'te jwt token'ı decode etmem doğru mu?
 @app_v1.get("/sera/")
 async def get_all_greenhouses(token: str = Depends(oauth_scheme)):
     # get user_id from jwt token
@@ -68,18 +66,16 @@ async def get_all_greenhouses(token: str = Depends(oauth_scheme)):
         return {f"My greenhouses {len(sera_all)}:  {sera_all} "}
 
 
-# current_user_id -> jwt token
+# Add new sera
 @app_v1.post("/sera/", status_code=HTTP_201_CREATED)
 async def create_greenhouse(sera: Sera, token: str = Depends(oauth_scheme)):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
     user_id = jwt_payload.get("user_id")
-    # print(">>> user: " + str(user_id))
     await db_insert_sera(user_id, sera)
     return {"result": "New greenhouse is created"}
 
 
 # Add another owner to existing sera
-# sera/owner mantıklı.
 @app_v1.post("/sera/owner/", status_code=HTTP_201_CREATED)
 async def add_another_owner_to_sera(sera_id: int, token: str = Depends(oauth_scheme)):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
@@ -90,7 +86,6 @@ async def add_another_owner_to_sera(sera_id: int, token: str = Depends(oauth_sch
 
 # sera_id -> query parameter
 @app_v1.delete("/sera/")
-# tüm endpointlerinde aynı current_user_id jwt token içinden almalısın ve sadece o adama ait veritabanı kayıtlarında işlem yapabilmelisin.
 async def delete_greenhouse(sera_id: int, token: str = Depends(oauth_scheme)):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
     user_id = jwt_payload.get("user_id")

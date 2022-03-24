@@ -6,14 +6,13 @@ from models.owner import Owner
 
 
 async def db_check_username(username):
-    # select * from User -> postgres
     query = """select * from users where username = :username """
     values = {"username": username}
     result = await fetch(query, False, values)
     return result
 
 
-# get user by user_id (primary key) instead of username
+# get user by user_id (primary key)
 async def db_check_jwt_token(user_id):
     query = """select * from users where user_id = :user_id"""
     values = {"user_id": user_id}
@@ -147,7 +146,7 @@ async def db_delete_sera(sera_id, current_user_id):
             await execute(query, False, values)
             return result
         # if user is not found in owners
-        except Exception as e:
+        except Exception:
             raise HTTPException(status_code=HTTP_401_UNAUTHORIZED,
                                 detail="You are not the owner!")
     # if there is no such sera

@@ -9,6 +9,7 @@ from utils.db.db_functions import db_find_owner
 import utils.redis_obj as re
 
 app_v1 = APIRouter()
+# Sera operations will be done from this router
 app_v1.include_router(app_sera, prefix="/sera")
 
 

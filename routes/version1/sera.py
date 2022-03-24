@@ -8,6 +8,7 @@ from utils.db.db_functions import db_get_all_sera, db_get_my_sera, db_insert_ser
     db_update_sera
 from utils.security import oauth_scheme
 
+# Sera operations will be done from this router
 app_sera = APIRouter()
 
 
@@ -52,7 +53,8 @@ async def add_another_owner_to_greenhouse(sera_id: int, token: str = Depends(oau
     return {"result": result}
 
 
-@app_sera.put("/elma/{sera_id}")
+# Update sera
+@app_sera.put("/{sera_id}")
 async def update_greenhouse(sera_id: int, new_sera: Sera=Body(...), token: str = Depends(oauth_scheme)):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
     user_id = jwt_payload.get("user_id")

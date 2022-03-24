@@ -66,8 +66,7 @@ async def db_get_sera_by_id(sera_id):
 
 # insert a new sera
 async def db_insert_sera(current_user_id, sera):
-    array = []
-    array.append(current_user_id)
+    array = [current_user_id]
     query = """ insert into sera(sera_name, city, zipcode, owners) 
                     values( :sera_name, :city, :zipcode, :current_user_id)
                 """
@@ -80,8 +79,6 @@ async def db_insert_sera(current_user_id, sera):
 async def db_add_owner_to_sera(current_user_id, sera_id):
     find_sera = await db_get_sera_by_id(sera_id)
     if find_sera is None:
-        # burada 404 diye yazıyla dönüyorsun ama bu bir anlam ifade etmiyor. Adama HTTP 404 dönmen gerekiyor requestine karşılık. şu an HTTP 200 dönüyor içinde 404 yazıyor bu olmaz.
-        # http status buradan mı gönderilmeli?
         raise HTTPException(status_code=HTTP_404_NOT_FOUND,
                             detail="Sera is not found!")
     else:
@@ -99,7 +96,30 @@ async def db_add_owner_to_sera(current_user_id, sera_id):
             return "You are added to owners!"
 
 
-# TODO: update sera info.
+# update sera info (update may be confusing for other owners?)
+async def db_update_sera(sera_id, new_sera, user_id):
+    result = await db_get_sera_by_id(sera_id)
+    if result is not None:
+        owners = result["owners"]
+        print(owners)
+        if user_id not in owners:
+            raise HTTPException(status_code=HTTP_401_UNAUTHORIZED,
+                                detail="You are not the owner!")
+        else:
+            query = """ update sera 
+                        set sera_name = :sera_name,
+                            city = :city,
+                            zipcode = :zipcode
+                        where sera_id = :sera_id
+                    """
+            values = {"sera_id": sera_id, "sera_name": new_sera.sera_name, "city": new_sera.city,
+                      "zipcode": new_sera.zipcode}
+            await execute(query, False, values)
+            return "Sera is updated!"
+    # if there is no such sera
+    else:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Sera is not found!")
+
 
 # delete sera
 async def db_delete_sera(sera_id, current_user_id):

@@ -19,12 +19,13 @@ After creation of these conatiners, we can run each test with clicking green run
   ![image](https://user-images.githubusercontent.com/57798386/162152775-1cb7b3a5-d999-4486-992e-8058b709b5d1.png)
 
 ## 2- Testing with testcontainers 🧊
-In testcontainers, testing logic is smilar to the first way with one difference: we don't need to create and run containers manually anymore!  
-With testcontainers we can use docker containers for functional and integration testing.  
+Testing logic is smilar to the first way with one difference: we don't need to create and run containers manually anymore!  
 
-In setUp function, a PostgreSQL database instance using PostgresContainer is created and necessary tables are created here. Before each test, setUp function is run and for each test we will have a new test database to work with.  
+With ```testcontainers``` we can use docker containers for functional and integration testing.  
 
-After each test is finished the container is stopped and removed (tearDown).
+In ```setUp``` function, a PostgreSQL database instance using ```PostgresContainer``` is created and necessary tables are created here. Before each test, ```setUp``` function is run and for each test we will have a new test database to work with.  
+
+After each test is finished the container is stopped and removed (```tearDown```).
 
 For running each test, we can use green run icons like in the first way.
 

@@ -1,8 +1,8 @@
 # Testing 
 I had tested the API with 3 ways for learning purposes:  
-  - Testing with test database end redis ```test_enpoints.py```
+  - Testing with test database end redis ```test_endpoints.py```
   - Testing with using [testcontainers](https://github.com/testcontainers/testcontainers-python) ```unit_tests_testcontainers.py```
-  - Load testing with Locust ```locust_load_test.py```  
+  - Load testing with [Locust](http://docs.locust.io/en/stable/) ```locust_load_test.py```  
 
 ## 1- Testing endpoints with test database and redis 🐳
 For testing endpoints, we don't want to use our actual database and redis. So before testing we need to create 2 containers:  

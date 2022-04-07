@@ -12,7 +12,8 @@ DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 REDIS_URL = "redis://localhost"
 
 # TEST or REAL
-TESTING = True
+TESTING = False
+IS_LOAD_TEST = True
 
 # TEST DB
 TEST_DB_HOST = "localhost"  # not localhost

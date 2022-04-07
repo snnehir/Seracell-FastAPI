@@ -19,7 +19,7 @@ After creation of these conatiners, we can run each test with clicking green run
   ![image](https://user-images.githubusercontent.com/57798386/162152775-1cb7b3a5-d999-4486-992e-8058b709b5d1.png)
 
 ## 2- Testing with testcontainers 🧊
-In testcontainers, testing logic is smilar to the first way with one difference: we don't need to create and run test containers anymore!  
+In testcontainers, testing logic is smilar to the first way with one difference: we don't need to create and run containers manually anymore!  
 With testcontainers we can use docker containers for functional and integration testing.  
 
 In setUp function, a PostgreSQL database instance using PostgresContainer is created and necessary tables are created here. Before each test, setUp function is run and for each test we will have a new test database to work with.  
@@ -39,10 +39,10 @@ To run ```locust_load_test.py```:
   ``` 
 Go to Locust's web interface from console:  
 
-![image](https://user-images.githubusercontent.com/57798386/162163271-3ab341f4-2acd-483e-a201-eda768d9a200.png)
+![locust-interface](https://user-images.githubusercontent.com/57798386/162164681-2e6d3a88-d914-44f5-86ac-f6adc820628f.png)
 
 Enter number of users and spawn rate yo want to test and start swarming:
 
-![image](https://user-images.githubusercontent.com/57798386/162162720-d63b0497-91d3-4bb9-bb1c-78bd30d042dd.png)
+![locust-statistics](https://user-images.githubusercontent.com/57798386/162162720-d63b0497-91d3-4bb9-bb1c-78bd30d042dd.png)
 
 

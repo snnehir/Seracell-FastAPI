@@ -31,7 +31,7 @@ async def get_user_validation(username: str = Body(...), password: str = Body(..
     redis_key = f"{username}, {password}"
     result = await re.redis.get(redis_key)  # returns none or data (t/f)
     if result is not None:
-        if result == b'True':
+        if result == b"True":
             return {"Is valid: ": True}
         else:
             return {"Is valid: ": False}

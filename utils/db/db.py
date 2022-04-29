@@ -1,5 +1,5 @@
 from utils.db.db_object import db
-from utils.const import TESTING, TEST_DB_URL
+from utils.const import TESTING
 
 
 async def execute(query, is_many, values=None):

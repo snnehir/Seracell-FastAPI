@@ -69,8 +69,12 @@ async def db_insert_sera(current_user_id, sera):
     query = """ insert into sera(sera_name, city, zipcode, owners) 
                     values( :sera_name, :city, :zipcode, :current_user_id)
                 """
-    values = {"sera_name": sera.sera_name, "city": sera.city,
-              "zipcode": sera.zipcode, "current_user_id": array}
+    values = {
+        "sera_name": sera.sera_name,
+        "city": sera.city,
+        "zipcode": sera.zipcode,
+        "current_user_id": array,
+    }
     await execute(query, False, values)
 
 
@@ -78,8 +82,7 @@ async def db_insert_sera(current_user_id, sera):
 async def db_add_owner_to_sera(current_user_id, sera_id):
     find_sera = await db_get_sera_by_id(sera_id)
     if find_sera is None:
-        raise HTTPException(status_code=HTTP_404_NOT_FOUND,
-                            detail="Sera is not found!")
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Sera is not found!")
     else:
         result = await db_get_sera_by_id(sera_id)
         owners = result["owners"]
@@ -102,8 +105,9 @@ async def db_update_sera(sera_id, new_sera, user_id):
         owners = result["owners"]
         print(owners)
         if user_id not in owners:
-            raise HTTPException(status_code=HTTP_401_UNAUTHORIZED,
-                                detail="You are not the owner!")
+            raise HTTPException(
+                status_code=HTTP_401_UNAUTHORIZED, detail="You are not the owner!"
+            )
         else:
             query = """ update sera 
                         set sera_name = :sera_name,
@@ -111,8 +115,12 @@ async def db_update_sera(sera_id, new_sera, user_id):
                             zipcode = :zipcode
                         where sera_id = :sera_id
                     """
-            values = {"sera_id": sera_id, "sera_name": new_sera.sera_name, "city": new_sera.city,
-                      "zipcode": new_sera.zipcode}
+            values = {
+                "sera_id": sera_id,
+                "sera_name": new_sera.sera_name,
+                "city": new_sera.city,
+                "zipcode": new_sera.zipcode,
+            }
             await execute(query, False, values)
             return "Sera is updated!"
     # if there is no such sera
@@ -147,9 +155,9 @@ async def db_delete_sera(sera_id, current_user_id):
             return result
         # if user is not found in owners
         except Exception:
-            raise HTTPException(status_code=HTTP_401_UNAUTHORIZED,
-                                detail="You are not the owner!")
+            raise HTTPException(
+                status_code=HTTP_401_UNAUTHORIZED, detail="You are not the owner!"
+            )
     # if there is no such sera
     else:
-        raise HTTPException(status_code=HTTP_404_NOT_FOUND,
-                            detail="Sera is not found!")
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Sera is not found!")

@@ -21,7 +21,7 @@ def get_hashed_password(password):
 def verify_password(plain_password, hashed_password):
     try:
         return pwd_context.verify(plain_password, hashed_password)
-    except Exception as e:
+    except Exception:
         return False
 
 
@@ -51,8 +51,12 @@ async def login_user(username, password):
 # Create access JWT token
 def create_jwt_token(user: JWTUser):
     expiration = datetime.utcnow() + timedelta(minutes=JWT_EXPIRATION_TIME_MINUTES)
-    jwt_payload = {"sub": user.username, "role": user.role,
-                   "user_id": user.user_id, "exp": expiration}
+    jwt_payload = {
+        "sub": user.username,
+        "role": user.role,
+        "user_id": user.user_id,
+        "exp": expiration,
+    }
     jwt_token = jwt.encode(jwt_payload, JWT_SECRET_KEY, JWT_ALGORITHM)
 
     return jwt_token
@@ -68,8 +72,8 @@ async def check_jwt_token(token: str = Depends(oauth_scheme)):
         if time.time() < expiration:
             is_valid = await db_check_jwt_token(user_id)
             if is_valid:
-                return final_checks(role)   # must be admin
-    except Exception as e:
+                return final_checks(role)  # must be admin
+    except Exception:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
     raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 

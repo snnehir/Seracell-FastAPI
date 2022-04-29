@@ -14,8 +14,11 @@ import aioredis
 
 app = FastAPI(title="Seracell Demo")
 # Authentication dependency (check jwt token) & test dependency
-app.include_router(app_v1, prefix="/v1",
-                   dependencies=[Depends(check_jwt_token), Depends(check_test_redis)])
+app.include_router(
+    app_v1,
+    prefix="/v1",
+    dependencies=[Depends(check_jwt_token), Depends(check_test_redis)],
+)
 
 
 # connect
@@ -48,8 +51,10 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         redis_key = f"token:{form_data.username}, {form_data.password}"
         user_redis = await re.redis.get(redis_key)
         if not user_redis:
-            jwt_user_dict = {"username": form_data.username,
-                             "password": form_data.password}
+            jwt_user_dict = {
+                "username": form_data.username,
+                "password": form_data.password,
+            }
             jwt_user = JWTUser(**jwt_user_dict)
             user = await authenticate_user(jwt_user)
             await re.redis.set(redis_key, pickle.dumps(user))
@@ -62,8 +67,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             user = pickle.loads(user_redis)
     # if redis is none (test container)
     else:
-        jwt_user_dict = {"username": form_data.username,
-                         "password": form_data.password}
+        jwt_user_dict = {"username": form_data.username, "password": form_data.password}
         jwt_user = JWTUser(**jwt_user_dict)
         user = await authenticate_user(jwt_user)
         # check if there is such user

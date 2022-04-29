@@ -4,8 +4,14 @@ from starlette.status import HTTP_201_CREATED
 
 from models.sera import Sera
 from utils.const import JWT_SECRET_KEY, JWT_ALGORITHM
-from utils.db.db_functions import db_get_all_sera, db_get_my_sera, db_insert_sera, db_delete_sera, db_add_owner_to_sera, \
-    db_update_sera
+from utils.db.db_functions import (
+    db_get_all_sera,
+    db_get_my_sera,
+    db_insert_sera,
+    db_delete_sera,
+    db_add_owner_to_sera,
+    db_update_sera,
+)
 from utils.security import oauth_scheme
 
 # Sera operations will be done from this router
@@ -46,7 +52,9 @@ async def create_greenhouse(sera: Sera, token: str = Depends(oauth_scheme)):
 
 # Add another owner to existing sera
 @app_sera.post("/owner/", status_code=HTTP_201_CREATED)
-async def add_another_owner_to_greenhouse(sera_id: int, token: str = Depends(oauth_scheme)):
+async def add_another_owner_to_greenhouse(
+    sera_id: int, token: str = Depends(oauth_scheme)
+):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
     user_id = jwt_payload.get("user_id")
     result = await db_add_owner_to_sera(user_id, sera_id)
@@ -55,7 +63,9 @@ async def add_another_owner_to_greenhouse(sera_id: int, token: str = Depends(oau
 
 # Update sera
 @app_sera.put("/{sera_id}")
-async def update_greenhouse(sera_id: int, new_sera: Sera=Body(...), token: str = Depends(oauth_scheme)):
+async def update_greenhouse(
+    sera_id: int, new_sera: Sera = Body(...), token: str = Depends(oauth_scheme)
+):
     jwt_payload = jwt.decode(token, JWT_SECRET_KEY, JWT_ALGORITHM)
     user_id = jwt_payload.get("user_id")
     result = await db_update_sera(sera_id, new_sera, user_id)

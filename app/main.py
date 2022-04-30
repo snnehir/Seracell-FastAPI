@@ -3,7 +3,7 @@ import pickle
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.status import HTTP_401_UNAUTHORIZED
-from app.utils.const import REDIS_URL, TESTING
+from app.utils.const import REDIS_URL, TESTING, TOKEN_INVALID_MATCH_MESSAGE
 from app.utils.database.db_object import db
 from app.models.jwtuser import JWTUser
 from app.routes.version1.v1 import app_v1
@@ -59,12 +59,13 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             jwt_user = JWTUser(**jwt_user_dict)
             # authenticate
             user = await authenticate_user(jwt_user)
-            # add it to cache
-            await re.redis.set(redis_key, pickle.dumps(user))
             # check if there is such user
             if user is None:
                 # HTTP exception must be raised
-                raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+                raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=TOKEN_INVALID_MATCH_MESSAGE)
+            # add it to cache if there is such user
+            else:
+                await re.redis.set(redis_key, pickle.dumps(user))
         # data is in cache
         else:
             user = pickle.loads(user_redis)

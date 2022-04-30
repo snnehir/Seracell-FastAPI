@@ -73,9 +73,12 @@ async def check_jwt_token(token: str = Depends(oauth_scheme)):
             is_valid = await db_check_jwt_token(user_id)
             if is_valid:
                 return final_checks(role)  # must be admin
+            else:
+                raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=JWT_INVALID_MESSAGE)
+        else:
+            raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=JWT_EXPIRED_MESSAGE)
     except Exception:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
-    raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
 
 # Last checking and returning the final result
@@ -83,4 +86,4 @@ def final_checks(role: str):
     if role == "admin":
         return True
     else:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=JWT_UNAUTHORIZED_ROLE)

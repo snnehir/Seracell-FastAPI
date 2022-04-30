@@ -3,7 +3,7 @@ I had tested the API with 3 ways for learning purposes:
   - Testing with test database end redis ```test_endpoints.py```
   - Testing by using [testcontainers](https://github.com/testcontainers/testcontainers-python) ```testing_with_testcontainers.py```
   - Load testing with [Locust](http://docs.locust.io/en/stable/) ```locust_load_test.py```  
-
+  
 ## 1- Testing endpoints with test database and redis 🐳
 For testing endpoints, we don't want to use our actual database and redis. So before testing we need to create 2 containers:  
   - test-db:  
@@ -16,7 +16,9 @@ For testing endpoints, we don't want to use our actual database and redis. So be
     ```  
 After creation of these conatiners, we can run each test with clicking green run icons in PyCharm:  
 
-  ![image](https://user-images.githubusercontent.com/57798386/162152775-1cb7b3a5-d999-4486-992e-8058b709b5d1.png)
+  ![image](https://user-images.githubusercontent.com/57798386/162152775-1cb7b3a5-d999-4486-992e-8058b709b5d1.png)  
+  
+_PS, ```TESTING``` flag in ```const.py``` should be ```True```_
 
 ## 2- Testing with testcontainers 🧊
 Testing logic is smilar to the first way with one difference: we don't need to create and run containers manually anymore!  
@@ -27,7 +29,9 @@ In ```setUp``` function, a PostgreSQL database instance using ```PostgresContain
 
 After each test is finished the container is stopped and removed (```tearDown```).
 
-For running each test, we can use green run icons like in the first way.
+For running each test, we can use green run icons like in the first way.  
+  
+_PS, ```TESTING``` flag in ```const.py``` should be ```True```_
 
 ## 3- Load testing with Locust
 With Locust we can test our API with custom number of users and requests to observe how our system responses in different situtations. 
@@ -46,4 +50,5 @@ Enter number of users and spawn rate yo want to test and start swarming:
 
 ![locust-statistics](https://user-images.githubusercontent.com/57798386/162162720-d63b0497-91d3-4bb9-bb1c-78bd30d042dd.png)
 
+_PS, ```IS_LOAD_TEST``` flag in ```const.py``` should be ```True```_
 

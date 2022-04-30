@@ -12,7 +12,7 @@ DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 REDIS_URL = "redis://redis"     # redis host also should be container name (compose up)
 
 # TEST or REAL
-TESTING = True
+TESTING = False
 IS_LOAD_TEST = False
 
 # TEST DB

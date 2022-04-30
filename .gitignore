@@ -1,3 +1,8 @@
-/work_env
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+# virtual environment
+/venv
 .idea
-/tests/all_json/
+/app/tests/all_json/

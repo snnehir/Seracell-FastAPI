@@ -5,19 +5,19 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgredb
+      - postgres
 
 
-  postgredb:
+  postgres:
     image: "postgres"
     environment:
-      POSTGRES_PASSWORD: 1234
+      POSTGRES_PASSWORD: password
       POSTGRES_USER: user
-      POSTGRES_DB: seracell_demo
+      POSTGRES_DB: seracell_demo_db
     ports:
       - "5432:5432"
 
-  redis_demo:
+  redis:
     image: "redis"
     ports:
       - "6379:6379"
